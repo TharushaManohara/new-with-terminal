@@ -1442,6 +1442,16 @@
             .timeline-content { padding: 20px; }
             .contact-info h2 { font-size: 2rem; }
             .stats-section { gap: 2rem; }
+
+            /* Statusbar adjustments */
+            .system-statusbar {
+                height: 20px;
+                padding: 0 5px;
+                font-size: 0.65rem;
+            }
+            .status-item { padding: 0 4px; }
+            /* Hide less critical items on very small screens */
+            #status-prettier, #status-encoding, #status-bell, #status-scroll { display: none; }
         }
     </style>
 </head>
@@ -1779,11 +1789,11 @@
                     <h3 class="form-title">Send me a message</h3>
                     <div class="input-group">
                         <label for="name">Your Name</label>
-                        <input type="text" id="name" name="name" class="input-field" placeholder="John Doe" required>
+                        <input type="text" id="name" name="name" class="input-field" placeholder="Type your name" required>
                     </div>
                     <div class="input-group">
                         <label for="email">Your Email</label>
-                        <input type="email" id="email" name="email" class="input-field" placeholder="john@example.com" required>
+                        <input type="email" id="email" name="email" class="input-field" placeholder="abc@gmail.com" required>
                     </div>
                     <div class="input-group">
                         <label for="message">Your Message</label>
