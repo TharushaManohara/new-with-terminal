@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
 
     <style>
         :root {
@@ -238,6 +239,7 @@
         }
 
         .nav-links a:hover { color: white; background: rgba(99, 102, 241, 0.1); }
+        .nav-links a.active { color: white; background: rgba(99, 102, 241, 0.1); border-bottom: 2px solid var(--primary); }
 
         .mobile-menu-btn {
             display: none;
@@ -426,6 +428,63 @@
             border-color: var(--primary);
             color: white;
             transform: translateY(-3px);
+        }
+
+        /* --- Scroll Down Indicator --- */
+        .scroll-down-indicator {
+            position: absolute;
+            bottom: 30px; /* Adjust as needed */
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        .scroll-down-indicator:hover { opacity: 1; cursor: pointer; }
+
+        .mouse {
+            width: 26px;
+            height: 40px;
+            border: 2px solid var(--text-muted);
+            border-radius: 15px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .mouse::before {
+            content: '';
+            width: 4px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scroll-mouse 1.2s infinite;
+        }
+
+        @keyframes scroll-mouse {
+            0% { opacity: 1; transform: translate(-50%, 0); }
+            100% { opacity: 0; transform: translate(-50%, 15px); }
+        }
+
+        .arrow {
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid var(--text-muted);
+            animation: scroll-arrow 1.2s infinite;
+        }
+
+        @keyframes scroll-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
         }
         
         .hero-img-box { 
@@ -641,39 +700,47 @@
         .stat-number { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 0.5rem; display: block;}
         .stat-label { color: var(--text-dim); font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* --- Horizontal Scrolling (Certificates) --- */
+        /* --- Grid Layout (Certificates) --- */
         .horizontal-section {
-            overflow-x: auto;
-            white-space: nowrap;
             padding: 2rem 0;
-            cursor: grab;
-            scrollbar-width: none; 
-            -ms-overflow-style: none;
+            width: 100%;
         }
         .horizontal-section::-webkit-scrollbar { display: none; }
 
         .cert-container {
-            display: inline-flex;
-            gap: 3rem;
-            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 0;
         }
 
         .cert-card {
-            width: 500px; /* Wide card format */
-            height: 300px;
+            width: 100%;
+            height: 280px;
             background: var(--card-bg);
-            border: 1px solid var(--glass-border);
             border-radius: 20px;
             position: relative;
             overflow: hidden;
-            transition: transform 0.3s;
+            transition: all 0.4s ease;
             white-space: normal;
-            flex-shrink: 0;
+        }
+
+        .cert-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px; 
+            padding: 1px; 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.5)); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+            pointer-events: none;
+            z-index: 2;
         }
 
         .cert-card:hover {
             transform: scale(1.02) rotate(1deg);
-            border-color: var(--primary);
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
         }
 
@@ -739,11 +806,24 @@
             padding: 25px; 
             background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
             border-radius: 16px; 
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+        }
+
+        .timeline-content::after { /* Using after because before is used for top bar */
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 16px; 
+            padding: 1px; 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.5)); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+            pointer-events: none;
+            z-index: 2;
         }
 
         .timeline-content::before {
@@ -761,7 +841,6 @@
         .timeline-content:hover::before { opacity: 1; }
 
         .timeline-content:hover { 
-            border-color: rgba(99, 102, 241, 0.3);
             transform: translateY(-5px);
             box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
@@ -784,7 +863,7 @@
         .timeline-content .description { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
 
 
-        /* --- Skills Section --- */
+        /* --- Skills Section (Dashboard Style) --- */
         .skills-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -793,22 +872,92 @@
 
         .skills-wrapper h3 { font-size: 1.5rem; margin-bottom: 2rem; color: white; border-left: 4px solid var(--primary); padding-left: 15px;}
 
-        .skill-box { margin-bottom: 1.5rem; }
-        .skill-title { display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted); font-size: 0.95rem; font-weight: 500;}
-        .skill-bar { width: 100%; height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; position: relative;}
-        .skill-fill { height: 100%; background: var(--gradient-main); border-radius: 10px; position: relative;}
-        
-        .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; }
-        .skill-tag-item {
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.03);
+        /* Radial Gauges */
+        .gauges-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .gauge-item {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
             border: 1px solid var(--glass-border);
-            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+
+        .gauge-item:hover { transform: translateY(-5px); border-color: var(--primary); }
+
+        .circular-chart {
+            display: block;
+            margin: 0 auto;
+            max-width: 80%;
+            max-height: 250px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 2.8;
+        }
+
+        .circle {
+            fill: none;
+            stroke-width: 2.8;
+            stroke-linecap: round;
+            animation: progress 1s ease-out forwards;
+        }
+
+        @keyframes progress { 0% { stroke-dasharray: 0 100; } }
+
+        .percentage {
+            fill: white;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: bold;
+            font-size: 0.5em;
+            text-anchor: middle;
+        }
+
+        .gauge-label {
+            margin-top: 15px;
             color: var(--text-muted);
             font-size: 0.9rem;
-            transition: 0.3s;
+            font-weight: 600;
         }
-        .skill-tag-item:hover { background: rgba(99, 102, 241, 0.1); color: white; border-color: var(--primary); }
+
+        /* Tech Chips */
+        .skill-tags { display: flex; flex-wrap: wrap; gap: 12px; }
+        
+        .skill-tag-item {
+            padding: 12px 18px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .skill-tag-item i { color: var(--primary); font-size: 1.1rem; transition: transform 0.3s; }
+
+        .skill-tag-item:hover { 
+            background: rgba(99, 102, 241, 0.15); 
+            color: white; 
+            border-color: var(--primary); 
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.2);
+        }
+        
+        .skill-tag-item:hover i { transform: scale(1.2); }
 
         /* --- Quake Terminal --- */
         .quake-terminal {
@@ -918,7 +1067,6 @@
         .project-card { 
             background: var(--card-bg);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
             border-radius: 20px; 
             overflow: hidden; 
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -927,10 +1075,23 @@
             transform: translateY(40px);
         }
 
+        .project-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 20px; 
+            padding: 1px; 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.5)); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+            pointer-events: none;
+            z-index: 2;
+        }
+
         .project-card.animate { animation: fadeInUp 0.6s ease forwards; }
 
         .project-card:hover { 
-            border-color: rgba(99, 102, 241, 0.4);
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 25px 50px rgba(0,0,0,0.4), 0 0 100px rgba(99, 102, 241, 0.1);
         }
@@ -1113,11 +1274,24 @@
             backdrop-filter: blur(20px);
             padding: 3rem; 
             border-radius: 24px; 
-            border: 1px solid var(--glass-border);
             position: relative;
             overflow: hidden;
             opacity: 0;
             transform: translateX(30px);
+        }
+
+        .contact-form::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 24px; 
+            padding: 1px; 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(168, 85, 247, 0.5)); 
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); 
+            -webkit-mask-composite: xor; 
+            mask-composite: exclude; 
+            pointer-events: none;
+            z-index: 2;
         }
 
         .contact-form.animate { animation: fadeInRight 0.6s ease forwards 0.2s; }
@@ -1274,44 +1448,73 @@
             .blueprint-main img { height: 200px; }
         }
 
-        /* --- System Status Bar (Footer) --- */
-        .system-statusbar {
+        /* --- Floating Status Widget --- */
+        .status-widget {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 25px;
-            background: #007acc; /* VS Code Blue */
+            bottom: 30px;
+            left: 30px;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 8px 16px;
+            border-radius: 50px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 0.75rem;
-            color: white;
-            z-index: 9999;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            gap: 15px;
+            z-index: 999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
         }
 
-        body.light-mode .system-statusbar { background: #e7e7e7; color: #333; border-top: 1px solid #ccc; }
+        .status-widget:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
 
-        .status-left, .status-right { display: flex; align-items: center; height: 100%; }
-        
-        .status-item {
-            padding: 0 8px;
-            height: 100%;
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a5b4fc;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+            animation: pulse-status 2s infinite;
+        }
+
+        @keyframes pulse-status {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .status-divider {
+            width: 1px;
+            height: 15px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .status-link {
             display: flex;
             align-items: center;
             gap: 6px;
-            cursor: pointer;
-            transition: background 0.2s;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s;
         }
 
-        .status-item:hover { background: rgba(255,255,255,0.2); }
-        body.light-mode .status-item:hover { background: rgba(0,0,0,0.1); }
+        .status-link:hover { color: white; }
 
-        /* Adjust Back to Top button position to not overlap footer */
-        #backToTop { bottom: 35px; }
+        /* Adjust Back to Top button position */
+        #backToTop { bottom: 30px; right: 30px; }
 
         /* --- Footer & Back to top --- */
         #backToTop { 
@@ -1428,6 +1631,7 @@
             .contact-form { padding: 2rem; }
             .padding-section { padding: 5rem 0; }
             .cert-card { width: 300px; height: 200px; }
+            .scroll-down-indicator { display: none; }
         }
 
         @media (max-width: 480px) {
@@ -1532,6 +1736,10 @@
                     <div class="floating-element float-2"><i class="fas fa-microchip"></i><span>IoT Engineer</span></div>
                 </div>
             </div>
+            <div class="scroll-down-indicator">
+                <div class="mouse"></div>
+                <div class="arrow"></div>
+            </div>
         </section>
     </div>
 
@@ -1623,7 +1831,7 @@
             <div class="section-header reveal">
                 <span class="section-badge">Certifications</span>
                 <h2>Achievements</h2>
-                <p><i class="fas fa-arrows-alt-h" style="margin-right: 8px;"></i> Scroll sideways to view certificates</p>
+                <p>Recognized milestones in my journey</p>
             </div>
         
             <div class="horizontal-section reveal">
@@ -1666,35 +1874,57 @@
             <div class="skills-container reveal">
                 <div class="skills-wrapper">
                     <h3>Coding Proficiency</h3>
-                    <div class="skill-box">
-                        <div class="skill-title"><span>HTML/CSS/JS</span><span>95%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div>
-                    </div>
-                    <div class="skill-box">
-                        <div class="skill-title"><span>React.js</span><span>85%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div>
-                    </div>
-                    <div class="skill-box">
-                        <div class="skill-title"><span>C++ / Arduino</span><span>90%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div>
-                    </div>
-                    <div class="skill-box">
-                        <div class="skill-title"><span>Python</span><span>80%</span></div>
-                        <div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div>
+                    <div class="gauges-grid">
+                        <!-- Gauge 1 -->
+                        <div class="gauge-item">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke="#6366f1" stroke-dasharray="0, 100" data-value="95" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                            <span class="gauge-label">HTML/CSS/JS</span>
+                        </div>
+                        <!-- Gauge 2 -->
+                        <div class="gauge-item">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke="#a855f7" stroke-dasharray="0, 100" data-value="85" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                            <span class="gauge-label">React.js</span>
+                        </div>
+                        <!-- Gauge 3 -->
+                        <div class="gauge-item">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke="#06b6d4" stroke-dasharray="0, 100" data-value="90" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                            <span class="gauge-label">C++ / Arduino</span>
+                        </div>
+                        <!-- Gauge 4 -->
+                        <div class="gauge-item">
+                            <svg viewBox="0 0 36 36" class="circular-chart">
+                                <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path class="circle" stroke="#22c55e" stroke-dasharray="0, 100" data-value="80" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <text x="18" y="20.35" class="percentage">0%</text>
+                            </svg>
+                            <span class="gauge-label">Python</span>
+                        </div>
                     </div>
                 </div>
                 <div class="skills-wrapper">
                     <h3>Tools & Hardware</h3>
                     <div class="skill-tags">
-                        <span class="skill-tag-item">VS Code</span>
-                        <span class="skill-tag-item">Git & GitHub</span>
-                        <span class="skill-tag-item">Figma</span>
-                        <span class="skill-tag-item">Arduino Mega</span>
-                        <span class="skill-tag-item">ESP32 / ESP8266</span>
-                        <span class="skill-tag-item">Raspberry Pi</span>
-                        <span class="skill-tag-item">Firebase</span>
-                        <span class="skill-tag-item">Proteus</span>
-                        <span class="skill-tag-item">Adobe Photoshop</span>
+                        <span class="skill-tag-item"><i class="fas fa-code"></i> VS Code</span>
+                        <span class="skill-tag-item"><i class="fab fa-github"></i> Git & GitHub</span>
+                        <span class="skill-tag-item"><i class="fab fa-figma"></i> Figma</span>
+                        <span class="skill-tag-item"><i class="fas fa-microchip"></i> Arduino Mega</span>
+                        <span class="skill-tag-item"><i class="fas fa-wifi"></i> ESP32</span>
+                        <span class="skill-tag-item"><i class="fas fa-server"></i> Raspberry Pi</span>
+                        <span class="skill-tag-item"><i class="fas fa-database"></i> Firebase</span>
+                        <span class="skill-tag-item"><i class="fas fa-bolt"></i> Proteus</span>
+                        <span class="skill-tag-item"><i class="fas fa-image"></i> Photoshop</span>
                     </div>
                 </div>
             </div>
@@ -1805,22 +2035,20 @@
         </section>
     </div>
 
-    <footer class="system-statusbar">
-        <div class="status-left">
-            <a href="https://github.com/TharushaManohara" target="_blank" class="status-item" id="status-github"><i class="fas fa-code-branch"></i> main*</a>
-            <div class="status-item" id="status-errors"><i class="fas fa-exclamation-circle"></i> 0 Errors</div>
-            <div class="status-item" id="status-live"><i class="fas fa-broadcast-tower"></i> Live</div>
-        </div>
-        <div class="status-right">
-            <div class="status-item" id="status-scroll">Ln 1, Col 1</div>
-            <div class="status-item" id="status-encoding">UTF-8</div>
-            <div class="status-item" id="status-lang">JavaScript</div>
-            <div class="status-item" id="status-prettier"><i class="fas fa-check-double"></i> Prettier</div>
-            <div class="status-item" id="status-bell"><i class="fas fa-bell"></i></div>
-        </div>
-    </footer>
-
     <button id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- Floating Status Widget -->
+    <div class="status-widget">
+        <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">System Online</span>
+        </div>
+        <div class="status-divider"></div>
+        <a href="https://github.com/TharushaManohara" target="_blank" class="status-link">
+            <i class="fab fa-github"></i>
+            <span>v2.0</span>
+        </a>
+    </div>
 
     <!-- Project Blueprint Modal -->
     <div id="blueprint-modal" class="blueprint-modal">
@@ -1859,6 +2087,11 @@
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        // Force scroll to top on page load/refresh
+        window.onload = function() {
+            window.scrollTo(0, 0);
+        };
+
         particlesJS("particles-js", {
             particles: {
                 number: { value: 80, density: { enable: true, value_area: 800 } },
@@ -1878,7 +2111,7 @@
         });
 
         const typewriter = document.getElementById('typewriter');
-        const words = ['Student', 'Innovator', 'Developer', 'Engineer'];
+        const words = ['Student', 'Innovator', 'Developer', 'Specialist'];
         let wordIndex = 0, charIndex = 0, isDeleting = false, typeSpeed = 100;
 
         function type() {
@@ -1905,8 +2138,28 @@
         type();
 
         const navbar = document.getElementById('navbar');
+        const sections = document.querySelectorAll('section');
+        const navItems = document.querySelectorAll('.nav-links a');
+
         window.addEventListener('scroll', () => {
             navbar.classList.toggle('scrolled', window.scrollY > 50);
+
+            // ScrollSpy Logic
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - sectionHeight / 3)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current)) {
+                    a.classList.add('active');
+                }
+            });
         });
 
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -2276,15 +2529,6 @@
             if(e.target === modal) modal.classList.remove('active');
         });
         
-        /* --- Status Bar Logic --- */
-        const scrollPosDisplay = document.getElementById('status-scroll'); // Changed ID
-        window.addEventListener('scroll', () => {
-            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const progress = (window.scrollY / totalHeight) * 100;
-            const line = Math.floor(window.scrollY / 20) + 1; // Fake line number based on pixels
-            if (scrollPosDisplay) scrollPosDisplay.innerText = `Ln ${line}, Col ${Math.floor(progress)}`;
-        });
-
         // Helper function to write messages to the terminal
         function writeTerminalOutput(message) {
             if (!terminal.classList.contains('open')) {
@@ -2296,29 +2540,6 @@
             termOutput.appendChild(responseLine);
             termOutput.scrollTop = termOutput.scrollHeight;
         }
-
-        // Add event listeners for status bar items
-        document.getElementById('status-errors')?.addEventListener('click', () => {
-            writeTerminalOutput("System Check: All modules online. No critical errors detected.");
-        });
-        document.getElementById('status-live')?.addEventListener('click', () => {
-            writeTerminalOutput("Network Status: Connected to local host. Latency: <span class='highlight-cmd'>12ms</span>.");
-        });
-        document.getElementById('status-scroll')?.addEventListener('click', () => {
-            writeTerminalOutput("Current position: <span class='highlight-cmd'>" + scrollPosDisplay.innerText + "</span>. Scroll data logged.");
-        });
-        document.getElementById('status-encoding')?.addEventListener('click', () => {
-            writeTerminalOutput("Character Encoding: <span class='highlight-cmd'>UTF-8</span>. Optimal for internationalization.");
-        });
-        document.getElementById('status-lang')?.addEventListener('click', () => {
-            writeTerminalOutput("Primary Development Language: <span class='highlight-cmd'>JavaScript (ES2023)</span>. Frontend frameworks: React.");
-        });
-        document.getElementById('status-prettier')?.addEventListener('click', () => {
-            writeTerminalOutput("Code Formatting: <span class='highlight-cmd'>Prettier</span> configured. Maintaining consistent style.");
-        });
-        document.getElementById('status-bell')?.addEventListener('click', () => {
-            writeTerminalOutput("Notification System: No unread notifications.");
-        });
         
         /* --- Hacker Decryption Effect (Scroll Trigger) --- */
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890@#$%&";
@@ -2363,6 +2584,45 @@
         document.querySelectorAll('.section-header h2').forEach(header => {
             header.dataset.value = header.innerText;
             textObserver.observe(header);
+        });
+
+        /* --- Vanilla Tilt Initialization --- */
+        VanillaTilt.init(document.querySelectorAll(".project-card, .cert-card, .gauge-item, .contact-link"), {
+            max: 10,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.2,
+            scale: 1.02
+        });
+
+        /* --- Radial Gauge Animation --- */
+        const gaugeObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const circle = entry.target;
+                    const value = circle.getAttribute('data-value');
+                    const percentText = circle.nextElementSibling;
+                    
+                    // Animate Stroke
+                    circle.style.strokeDasharray = `${value}, 100`;
+                    
+                    // Animate Number
+                    let count = 0;
+                    const time = 1000 / value;
+                    const counter = setInterval(() => {
+                        count++;
+                        percentText.textContent = `${count}%`;
+                        if (count == value) clearInterval(counter);
+                    }, time);
+
+                    observer.unobserve(circle);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.circle').forEach(circle => {
+            circle.style.strokeDasharray = "0, 100"; // Reset initially
+            gaugeObserver.observe(circle);
         });
 
     </script>
